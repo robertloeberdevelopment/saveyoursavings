@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Save your Savings! - A fun HTML5 game - Hold bankers from escaping with bonuses taken from your savings</title>
+
+
+<style>
+     html {
+    cursor: none;
+    
+    }
+    
+    body{
+    background-color:#F3F2E2;
+    background: url('bankier_voor_achtergrond2.jpg');
+
+    }
+    
+    #outer {
+   
+    width:100%;
+
+ 
+    /* Firefox */
+    display:-moz-box;
+    -moz-box-pack:center;
+    -moz-box-align:center;
+
+    /* Safari and Chrome */
+    display:-webkit-box;
+    -webkit-box-pack:center;
+    -webkit-box-align:center;
+
+    /* W3C */
+    display:box;
+    box-pack:center;
+    box-align:center;
+    }
+      
+     
+    #inner{
+    margin: 0 auto;   
+    width:1100px;      
+    }
+      
+
+     
+   h1{
+    position: absolute;
+    top: 20%;
+    font-size: 9px;
+    color:#DDD5C2;
+    z-index:-100;
+   }
+        
+    #canvas {
+    position: absolute;
+    top: 0px;
+    z-index:-1;
+    border-style:solid;
+    border-width:1px;
+    background: url('achtergrond_save_your_savings.jpg') no-repeat;
+    background-position:0px,0px;   
+    }
+     
+    #canvas1 {
+    position: absolute;
+    top: 0px;
+    background:transparent;
+    z-index:1;
+    }
+    
+    
+    #canvas2 {
+    position: absolute;
+    top: 0px;
+    background:transparent;
+    z-index:2;
+    }
+    
+    #canvas3 {
+    position: absolute;
+    top: 0px;
+    background:transparent;
+    z-index:3;
+
+    }
+    
+    #canvas4 {
+    position: absolute;
+    top: 600px;
+    background:#2C3D67;
+    z-index:4;
+    border-style:solid;
+    border-width:1px;
+    }
+    
+    #canvas5 {
+    position: absolute;
+    top: 0px;
+    background:transparent;
+    z-index:0;
+    }
+    
+    
+    #label{
+     z-index:-10;
+     position:absolute;
+     right:0%;
+     width:20px;
+     height:340px;
+     top:27%;
+     background: url('Label_sign_of_four_design.png') no-repeat;
+     background-position:0px, 0px;   
+     
+     } 
+    
+</style>
+
+</head>
+
+<body>
+
+
+ 
+ 
+<div id="outer">
+
+     
+    <div id="inner">
+     
+    <h1>SAVE YOUR SAVINGS! - A fun HTML5 game - Prevent bankers from escaping with bonuses taken from your savings</h1>
+    
+    <canvas id="canvas5" width="1100" height="600"> 
+                 
+    </canvas>   
+
+    <canvas id="canvas4" width="1100" height="40"> 
+              
+    </canvas>   
+      
+    <canvas id="canvas3" width="1100" height="600"> 
+               
+    </canvas>   
+        
+    <canvas id="canvas2" width="1100" height="600"> 
+                
+    </canvas>
+    
+    <canvas id="canvas1" width="1100" height="600"> 
+                
+    </canvas>
+    
+    <canvas id="canvas" width="1100" height="600"> 
+                 Your browser does not support this game. Please try again with a different and newer browser, such as Firefox or Chrome. Do it, because this is a fun game!
+    </canvas>
+
+     <audio id="soundEfxSplash1" src="ballon_boom1.wav" style="display: none;"></audio>
+     <audio id="soundEfxSplash2" src="ballon_boom2.wav" style="display: none;"></audio>
+     <audio id="soundEfxSplash3" src="ballon_boom3.wav" style="display: none;"></audio>
+     <audio id="soundEfxCash" src="kassa1.wav" style="display: none;"></audio>
+     <audio id="soundEfxApplaus" src="applaus.wav" style="display: none;"></audio>
+      <audio id="soundEfxFinalDowner" src="final_music_downer.wav" style="display: none;"></audio>
+      <audio id="soundEfxFinalUpper" src="final_music_upper.wav" style="display: none;"></audio>
+    
+   
+    </div>
+    
+</div>
+
+
+<div id="label"></div>    
+
+ 
+
+</body>
+
+<script>
+  //positie van spelletje aanpassen als het scherm groter is dan de gemiddelde laptop   
+ var schermhoogte=screen.height;
+ if(schermhoogte>850){
+     document.getElementById('outer').style.position="fixed";
+     document.getElementById('outer').style.top="8%";
+     
+ }    
+</script>
+
+
+
+
+<script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var canvas1 = document.getElementById('canvas1');
+    var ctx1 = canvas1.getContext('2d');
+    var canvas2 = document.getElementById('canvas2');
+    var ctx2 = canvas2.getContext('2d');
+    var canvas3 = document.getElementById('canvas3');
+    var ctx3 = canvas3.getContext('2d');
+    var canvas4 = document.getElementById('canvas4');
+    var ctx4 = canvas4.getContext('2d');
+    var canvas5 = document.getElementById('canvas5');
+    var ctx5 = canvas5.getContext('2d');
+    var soundEfxSplash1 = document.getElementById("soundEfxSplash1");//geluidseffect
+    var soundEfxSplash2 = document.getElementById("soundEfxSplash2");//geluidseffect
+    var soundEfxSplash3 = document.getElementById("soundEfxSplash3");//geluidseffect
+    var soundEfxCash = document.getElementById("soundEfxCash");//geluidseffect
+    var soundEfxApplaus = document.getElementById("soundEfxApplaus");//geluidseffect
+    var soundEfxFinalDowner = document.getElementById("soundEfxFinalDowner");//geluidseffect 
+    var soundEfxFinalUpper = document.getElementById("soundEfxFinalUpper");//geluidseffect 
+     
+        
+    var xNaald=450;
+    var yNaald=400;
+    var bonus;
+    var spaargeldSaldo=100000;//saldo waarmee je begint
+    var toggleLek=false;
+    var toggleReductie=false;
+    var aantalBankiers=35;//aantal bankiers per spel dat ontsnapt
+    var showInstructie=true;
+    var tellerPlayerBonus=0;
+    var tellerPlayerBonusUitgekeerd=0;
+   
+   
+   
+   
+    
+document.addEventListener('keydown', doKeyDown, true);
+document.addEventListener('keyup', doKeyUp, true);
+document.addEventListener('mousemove', doMouseMove, true);
+
+
+function naald(xNaald,yNaald){
+    
+    var img = new Image();
+    ctx2.clearRect(xNaald-500,yNaald-200,1000,600);    
+          img.onload = function(){ 
+          ctx2.drawImage(img,xNaald,yNaald);
+          };
+    img.src = 'naald_klein.png'; 
+     }
+
+
+//muis positie opvangen
+function doMouseMove(event){
+        xNaald=event.clientX;
+        yNaald=event.clientY;
+        //ctx3.clearRect(0,0,500,500);
+        //ctx3.fillStyle = 'red';
+        //ctx3.font = "15px Arial";
+        //ctx3.fillText(xNaald+ " "+ yNaald, 100,30);  
+   
+        naald(xNaald,yNaald);
+    
+    }
+
+function doKeyDown(event){//als enter ingedrukt wordt
+               if (event.keyCode ==13){
+               newGame();
+               }
+          }
+
+function doKeyUp(event){
+               if (event.keyCode ==13){ //als enter omhoog gaat
+               setTimeout(startGame,3000) //startgame maar 3 sec vertragen, want anders is browser nog niet klaar na refresh
+               setTimeout(newGameAnounce,500);
+               }
+          }
+
+
+ 
+        var tellerAnimatie=1;
+        var srcX=0;
+        var srcY=0;
+        var srcW=150;
+        var srcH=150;
+        var destW=150;
+        var destH=150;
+
+//bankier op canvas, bedrag dat meeloop op canvas3
+function bankier(x,y, bonusDezeBankier, koersX) {
+    var img = new Image();
+    modulo=tellerAnimatie%4;
+        
+   if (koersX<0){
+        if (modulo==0  ){srcX=0;} //telkens twee frames per beeldje
+        if (modulo==1) {srcX=150;}
+        if (modulo==2){srcX=300;}
+        if (modulo==3) {srcX=150;}// tussenstand ook weer op terugweg
+    }
+    else{
+        if (modulo==0 ){srcX=450;} //telkens twee frames per beeldje
+        if (modulo==1 ){srcX=600;}
+        if (modulo==2 ){srcX=750;}
+        if (modulo==3 ){srcX=600;}// tussenstand ook weer op terugweg    
+    }
+    //alert(koersX);
+    
+    img.onload = function(){
+    //alert (x + " huis "+y);    
+    ctx1.drawImage(img,srcX,srcY,srcW,srcH,x,y,destW,destH);
+    };
+    
+    img.src = 'bankier_naar_links_klein.png';
+    tellerAnimatie++;
+     //alert(modulo);
+    
+    ctx3.fillStyle = '#2C3D67';
+    ctx3.font = "60px Arial";
+    ctx3.fillText(bonusDezeBankier, x+100,y+30);//bedrag bonus vermelden
+   
+  
+  if (// kwadrant vaststellen waarin de naald object raakt
+      x >= (xNaald-150) && 
+      xNaald >= (x-0) &&
+      y >= (yNaald-150) &&
+      yNaald >= (y-0) 
+      
+      && (xNaald < 400 || xNaald > 650) //&&// om te voorkomen dat je kan lekprikken door in het midden te blijven
+        //(yNaald < 300 || yNaald > 500) 
+      )  {
+              //wat er gebeurt als je object raakt
+              lek();
+              
+              ontploffing(x,y, bonusDezeBankier);//ontploffing maken
+              
+              function maakVlek() {
+               vlek(x,y, bonusDezeBankier);}// vlek oproepen
+              setTimeout(maakVlek,200);//vlek beetje vertragen, zodat eerst de flits komt
+            }
+    
+    //als bankier aan rand veld is gekomen is hij ontsnapt en wordt zijn bonus van je spaargeld afgetrokken, hier de coordinaten instellen
+        if (x < -150 || x > 1200 || y < -150 || y >650 ){
+            
+         
+          spaargeldUpdate(bonusDezeBankier); //spaargeld onderaan updaten en geluidseffect 
+        //alert("reductie")
+          tellerPlayerBonus=0;//speler moet weer opnieuw beginnen met bonus verdienen (x aantal bankiers achterelkaar geraakt), dus teller op 0 als een is ontsnapt
+        }
+  
+            
+   }//einde bankier
+ 
+ 
+ 
+function lek(){//
+            //soundEfxSplash.play();//geluidseffect
+            ctx4.fillStyle = '#EEE5D4';
+            ctx4.font = "bold 22px Arial";
+            if (toggleLek==false) {
+            ctx4.clearRect(350,0,400,50);   
+            ctx4.fillText( "$ "+bonusDezeBankier + ",- bonus theft prevented!",390,28);
+            }
+            //j=0;//teller van de array bonus, eerste bedrag in array is 0
+            bonusDezeBankier=0;//als lek, bonus op 0 zetten, zodat bankier verdwijnt
+            toggleLek=true;
+            tellerPlayerBonus++;
+            //alert(tellerPlayerBonus);
+          if(tellerPlayerBonus>=10){ geefPlayerBonus() ;}//aantal bankiers achter elkaar raken voor je bonus krijgt
+        }
+
+        
+
+             
+          //plaatje ontploffing buiten de functie preloaden, anders komt ie te laat als functie wordt aangeroepen
+          var img2 = new Image();
+          img2.ready = false;
+          img2.onload = true;
+          img2.src = 'explosie2_klein.png';
+          
+          
+         
+ 
+function ontploffing(xVlek,yVlek,bonusDezeBankier){
+    
+          
+          //grootte explosie afhankelijk maken van de bonusDezeBankier; 3 graden van explosie door plaatje groter of kleiner te vertonen
+           if(bonusDezeBankier >0 && bonusDezeBankier <=4000 ){
+             
+             soundEfxSplash1.play();//geluidseffect
+              //alert(klein);
+            xBoom=xVlek-80; 
+            yBoom=yVlek-80;
+            destWBoom=300;
+            destHBoom=300;
+          }
+          
+          if(bonusDezeBankier >4000 && bonusDezeBankier <=10000){
+            soundEfxSplash2.play();//geluidseffect
+            //alert(middelgr);
+            xBoom=xVlek-180; 
+            yBoom=yVlek-200;
+            destWBoom=600;
+            destHBoom=600;
+          }
+          
+          if(bonusDezeBankier >10000) {
+             soundEfxSplash3.play();//geluidseffect
+                //alert(groot);
+            xBoom=xVlek-420; 
+            yBoom=yVlek-550;
+            destWBoom=1200;
+            destHBoom=1200; 
+          }
+            
+          ctx3.drawImage(img2,xBoom,yBoom,destWBoom,destHBoom);
+
+        } 
+        
+
+ //de bloedvlek als bankier is geraakt
+function vlek(xVlek,yVlek,bonusDezeBankier){
+    
+        var img = new Image();
+     
+        //grootte van de vlek afh van bonusDezeBankier
+         if(bonusDezeBankier >0 && bonusDezeBankier <=4000 ){
+            //alert(klein);
+          xVlek=xVlek+50; 
+          yVlek=yVlek+20;
+          destWVlek=110;
+          destHVlek=110;
+        }
+        
+        if(bonusDezeBankier >4000 && bonusDezeBankier <=10000){
+          //alert(middelgr);
+          xVlek=xVlek+25; 
+          yVlek=yVlek+10;
+          destWVlek=130;
+          destHVlek=130;
+        }
+        
+        if(bonusDezeBankier >10000) {
+              //alert(groot);
+          xVlek=xVlek-5; 
+          yVlek=yVlek-50;
+          destWVlek=150;
+          destHVlek=150; 
+        }
+        
+         
+        //de bloedvlek
+        img.onload = function(){    
+        ctx5.drawImage(img,xVlek,yVlek,destWVlek,destHVlek);
+        };
+       
+        img.src = 'inkblot1.png';
+        
+        } 
+
+        
+        x=[];
+        y=[];
+        
+        //var aantalBankiers=100;
+        var koersX = new Array;
+        var koersY = new Array;
+        var bonus = new Array;
+        //var bonus = [0,2000,3000,4000,6000,8000,10000,12000,14000,16000]//array met de bonus waarden
+        
+        function koersXas(){//op xas flink tempo mogelijk maken
+        var k=[-55,-50,-35,-30,-28,-25,25,28,30,35,50,55]
+        var i=Math.floor((Math.random()*12));
+        return k[i];
+        }
+        
+        function koersYas(){//beetje verschillend van x-as, langzamer, om met rechthoek rekening te houden
+        var k=[-35,-28,-22,-17,-15,-5,5,15,17,22,28,35]
+        var i=Math.floor((Math.random()*12));
+        return k[i];
+        }
+        
+        //hier op grond van de koerssnelheid de hoogte van bonus bepalen, sneller is hogere bonus
+        function bonusToewijzen(kX, kY){
+               var b=[1000,2000,4000,6000,8000,10000,12000,15000,20000,25000]//array met de bonus waarden die afh van snelheid koers worden gekozen  
+               var v = (kX*kX) + (kY*kY);//snlheid vaststellen, kwadrateren ook vanwege negatieve koersen en compensatie, zodat niet simpel kX + kY snelheid wordt
+               var i;// i opnieuw declareren, anders wordt het een oneindige loop, omdat hij i uit andere functies gebruikt...
+               if (v > 4000)               {i=9;}
+               if (v > 3700 &&  v <= 4000) {i=8;}
+               if (v > 3200 &&  v <= 3700) {i=7;}
+               if (v > 2800 &&  v <= 3200) {i=6;} 
+               if (v > 2400 &&  v <= 2800) {i=5;} 
+               if (v > 1900 &&  v <= 2400) {i=4;}
+               if (v > 1500 &&  v <= 1900) {i=3;}
+               if (v >1200 &&  v <= 1500)  {i=2;}
+               if (v >900 &&  v <= 1200)   {i=1;}
+               if (v  <= 900)              {i=0;} 
+              //alert(b[i]); 
+              return b[i];
+          
+        }
+        
+        //arrays met koersen vullen
+        for (var i=0;i<aantalBankiers;i++){
+        koersX[i]=koersXas();
+        koersY[i]=koersYas();
+        bonus[i]=bonusToewijzen(koersX[i], koersY[i]);
+        //alert(bonus[i]);
+        }   
+        
+        var teller=0;
+        var i=0;
+        //var aantalHuisjes=koersX.length;
+        tellerMax=50;//voor eerste keer instellen, daarna binnen de functie random
+       
+//de loopfunctie
+function lanceer(){
+// met tijdinterravallen in array en deze als for loop gebruiken, i laten verspringen na tijdinterval
+//loopen door de koers array
+
+        if (teller>tellerMax){//tijdinterval waarmee de volgende koers uit de array koers wordt gehaald, en de i wordt opgehoogd voor een nieuw object dit randomiseren binnen grenzen, todo: afhankelijk maken van tempo, dus koersX en KoersY, langzaam is teller hoger
+            teller=0;//dit allemaal straks in functie onderbrengen
+            tellerMax=Math.floor((Math.random()*35)+2);// random maximum stellen van aantal keren loop dat lanceer functie doorloopt
+
+            i++;
+            toggleLek=false;//weer op false zetten, zodat in functie lek weer op true kan na raak te hebben gestoken
+            toggleReductie=false;
+            ctx4.clearRect(350,0,500,50); //canvas met score teksten clearen, maar niet linksonder  
+           //alert(tellerMax );
+            }
+            
+        else{teller++};
+            
+        if (undefined !=x[i]){
+        x[i]=koersX[i]+x[i];
+        }
+        else{x[i]=450;}//begin coordinaten van bankier
+        
+        if (undefined !=y[i]){
+        y[i]=koersY[i]+y[i];
+        }
+        else{y[i]=220;}//begin coordinaten
+        
+        //if (teller==1) {
+        //j=Math.floor((Math.random()*9)+1);
+        //}
+        //alert(x[i]+" huisje"+y[i]);
+        
+        bonusDezeBankier=bonus[i];//bonus 
+        
+        ctx1.clearRect(0,0,1100,600);//telkens de canvassen wissen in de loop
+        ctx3.clearRect(0,0,1100,600);
+        
+        
+        if (i < aantalBankiers && toggleLek==false) {
+            bankier(x[i],y[i], bonusDezeBankier, koersX[i]);//hier bankier telkens triggeren
+            }
+       
+       
+        if (i >= aantalBankiers ){gameOver(spaargeldSaldo);}
+        
+        spaargeldMelden(spaargeldSaldo);//saldo bank tonen onderaan
+  
+//alert(teller);
+}
+
+
+function instructie(showInstructie){
+                
+                ctx3.clearRect(0,0,700,500);
+                if(showInstructie==true){
+                
+                img= new Image;
+                img.onload = function(){    
+                ctx1.drawImage(img,35,15);
+                }
+                img.src = 'dollar_achtergrond.jpg';
+                
+                //ctx3.fillStyle = "#DBDCD7";
+                //ctx3.fillRect (30, 15,460, 190);
+                ctx3.fillStyle = '#2C3D67';
+                ctx3.font = "24px Arial";
+                ctx3.fillText("Save your Savings!",50,45);
+                ctx3.font = "14px Arial";
+                ctx3.fillText("Puncture the inflated bankers with your needle to prevent them", 50,70);
+                ctx3.fillText("from escaping the bank with the bonuses they took from your savings.", 50,90);
+                ctx3.fillText("", 50,97);
+                ctx3.fillText("The higher the bonuses they carry, the faster they run.", 50,115);
+                ctx3.fillText("If you hit 10 bankers in a row, you earn $ 10.000,- bonus yourself.", 50,140);
+                ctx3.fillText("Move the needle with the mouse to hit the escaping bankers.", 50,164);
+                ctx3.fillText("Enter: start game.", 50,190);
+
+                }
+        else{
+            ctx3.clearRect(0,0,1100,500);
+            ctx1.clearRect(0,0,1100,500);}
+            
+            //alert(showInstructie);}
+        
+        }
+
+function spaargeldUpdate(bonusDezeBankier){
+                if (toggleReductie==false){//mag er een keer aftrekken, daarna gaat toggle reductie op true
+                spaargeldSaldo-=bonusDezeBankier;
+                
+                soundEfxCash.play();//geluidseffect
+                //alert(bonus[j]);
+                }
+                toggleReductie=true;
+        }
+
+
+
+function geefPlayerBonus(){
+               soundEfxApplaus.play();//geluidseffect
+              //alert("krijgt bonus");    
+               spaargeldSaldo+=10000;
+               ctx4.fillStyle = '#A1FCD9';
+               ctx4.font = "bold 18px Arial";
+               ctx4.clearRect(0,0,1000,200);   
+               if(tellerPlayerBonusUitgekeerd==0){
+               ctx4.fillText( "You earned 10.000,- bonus!",10,27); }
+               if(tellerPlayerBonusUitgekeerd>=1){
+               ctx4.fillText("You are good! 10.000,- bonus again!",10,27); }
+               
+               tellerPlayerBonus=0;
+               tellerPlayerBonusUitgekeerd++;
+          }
+
+
+function spaargeldMelden(spaargeldSaldo){
+           
+            if (spaargeldSaldo<0){spaargeldSaldo=0;
+            i=0;
+            gameOver(spaargeldSaldo);
+            }
+            else {spaargeldSaldo= spaargeldSaldo;}
+            ctx4.clearRect(750,0,500,100); 
+            ctx4.fillStyle = '#eee5d4';
+            ctx4.font = "22px Arial";  
+            ctx4.fillText("Savings: $ " + spaargeldSaldo +",-" ,880,28);
+          }
+
+function gameOver(spaargeldSaldo){
+               //soundEfxFinalDowner.play();//geluidseffect
+            var boodschap;
+            var winst=spaargeldSaldo-100000;
+            if (spaargeldSaldo==0){boodschap="The bankers took all your savings!";
+            soundEfxFinalDowner.play();//geluidseffect
+            }
+            if (spaargeldSaldo==100000){boodschap="You won! The bankers got nothing.";
+            soundEfxFinalUpper.play();//geluidseffect
+            }
+            if (spaargeldSaldo>100000){boodschap="You beat the bankers, and earned "+winst+ ",-";
+             soundEfxFinalUpper.play();//geluidseffect
+            }
+            
+            if (spaargeldSaldo  >0 && spaargeldSaldo < 100000 ) {boodschap= "You rescued $ "+spaargeldSaldo+",- from your savings";
+            soundEfxFinalDowner.play();//geluidseffect
+            }
+            
+            ctx3.clearRect(0,0,1000,200);  
+            ctx5.fillStyle = "#DBDCD7";
+            ctx5.fillRect (220, 260,680,180);
+            ctx5.fillStyle = '#2C3D67';
+            ctx5.textAlign ="center";
+            ctx5.font = "bold 50px Arial";
+            ctx5.fillText("Game Over!",550,320);
+            ctx5.font = "bold 28px Arial";
+            ctx5.fillText(boodschap ,550,370);
+            ctx5.font = "bold 16px Arial";
+            ctx5.fillText("Try again? Press 'Enter'" ,550,410);
+            
+            instructie(true);
+            clearInterval(start);//hier gameloop stoppen
+          }
+
+function newGame(){
+            window.location.reload();
+            }
+
+function startGame(){ 
+            start=setInterval(lanceer,80);
+            }
+            
+function newGameAnounce(){
+            ctx1.clearRect(0,0,1100,350);
+            ctx3.clearRect(0,0,1100,350);
+            ctx1.fillStyle = '#2C3D67';
+            ctx1.font = "bold 60px Arial";
+            //ctx3.clearRect(0,0,1000,200);   
+            ctx1.fillText("New Game...",390,470);
+            }            
+            
+naald(xNaald,yNaald);
+instructie(showInstructie);
+//newGameAnounce();
+//gameOver();
+
+</script>
+
+
+
+
+
+<!-- Start of StatCounter Code for Default Guide -->
+<script type="text/javascript">
+var sc_project=8864096; 
+var sc_invisible=1; 
+var sc_security="4df248d4"; 
+var scJsHost = (("https:" == document.location.protocol) ?
+"https://secure." : "http://www.");
+document.write("<sc"+"ript type='text/javascript' src='" +
+scJsHost+
+"statcounter.com/counter/counter.js'></"+"script>");
+</script>
+<noscript><div class="statcounter"><a title="free web stats"
+href="http://statcounter.com/free-web-stats/"
+target="_blank"><img class="statcounter"
+src="http://c.statcounter.com/8864096/0/4df248d4/1/"
+alt="free web stats"></a></div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+
+
+</html>
